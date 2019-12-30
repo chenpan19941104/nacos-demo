@@ -1,0 +1,25 @@
+server:
+  port: 8888
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: provider-route
+#          uri: http://localhost:8090
+          uri: lb://service-provider
+          predicates:
+            - Path=/provider/**
+          filters:
+            - RewritePath=/provider(?<segment>/?.*), $\{segment}
+        - id: consumer-route
+#          uri: http://localhost:8080
+          uri: lb://service-consumer
+          predicates:
+            - Path=/consumer/**
+          filters:
+            - RewritePath=/consumer(?<segment>/?.*), $\{segment}
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  application:
+    name: gateway-demo
